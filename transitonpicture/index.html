@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<style>
+			*{
+				padding: 0;
+				margin: 0;
+				list-style: none;
+			}
+			.wrapper{
+				position: relative;
+				width: 400px;
+				height: 250px;
+				margin: 100px auto 0;
+				/*border: 1px solid black;*/
+				overflow: hidden;
+			}
+			.wrapper .SliderPage{
+				position: absolute;
+				width: 2000px ;
+				height: 250px;
+			}
+			.wrapper .SliderPage li{
+				float: left;
+				width: 400px;
+				height: 250px;
+			}
+			.wrapper .SliderPage li img{
+				width: 100%;
+				height: 100%;
+			}
+			.btn{
+				width: 40px;
+				height: 40px;
+				background-color: black;
+				color: white;
+				line-height: 40px;
+				position: absolute;
+				top: 50%;
+				margin-top: -20px;
+				opacity: 0.3;
+				text-align: center;
+				cursor: pointer;
+			}
+			.btn.right{
+				right: 15px;
+			}
+			.btn.left{
+				left: 15px;
+			}
+			.wrapper:hover .btn{
+				opacity: 0.6;
+			}
+			.wrapper .SliderInder{
+				width: 100%;
+				text-align: center;	
+				position: absolute;
+				bottom:15px ;
+			}
+			.wrapper .SliderInder span{
+				display: inline-block;
+				border-radius: 50%;
+				background-color: white;
+				cursor: pointer;
+				width: 8px;
+				height: 8px;
+				margin-right: 10px;
+			}
+			.wrapper .SliderInder .active{
+				background-color: red;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="wrapper">
+		<ul class="SliderPage">
+			<li><img src="img/2.jpg"</li>
+			<li><img src="img/3.jpg"</li>
+			<li><img src="img/4.jpg"</li>
+			<li><img src="img/5.jpg"</li>
+			<li><img src="img/2.jpg"</li>
+		</ul>
+		<div class="btn right">&gt;</div>
+		<div class="btn left">&lt;</div>
+		<div class="SliderInder">
+			<span class="active"></span>
+			<span></span>
+			<span></span>
+			<span></span>
+		</div>
+		</div>
+		
+
+		<script>
+			var SliderPage = document.getElementsByClassName("SliderPage")[0];
+			var timer=null;
+			var moveWidth = SliderPage.children[0].offsetWidth;
+			var num = SliderPage.children.length -1;
+			var btnleft = document.getElementsByClassName("left")[0];
+			var btnright = document.getElementsByClassName("right")[0];
+			var oSpanArray = document.getElementsByClassName("SliderInder")[0].getElementsByTagName("span");
+			var index = 0;
+			var lack =  true;
+			btnleft.onclick = function(){
+				autoMove("right - left");
+			}
+			btnright.onclick = function(){
+				autoMove("left - right");
+			}
+			for(var i =0;i<oSpanArray.length ;i++){
+				(function(myindex){
+					oSpanArray[i].onclick =function(){
+						lack = false;
+						clearTimeout(timer);
+						index = myindex;
+						move(SliderPage,{left: - index * moveWidth},function(){
+							lack = true;
+							timer = setTimeout(autoMove,1500);
+							changeIndex(index);
+						})
+				}
+				})(i)		
+			}
+			function autoMove(deriction){
+				if(lack){
+					  lack = false;
+					  clearTimeout(timer);
+						if(deriction == "right - left"  ){
+							if(SliderPage.offsetLeft == 0){
+								SliderPage.style.left = -num * moveWidth +"px";	
+								index = num ;
+							}
+							index --;
+					  		 move(SliderPage,{left:SliderPage.offsetLeft + moveWidth},function(){
+					  		 	timer = setTimeout(autoMove,1500);
+					  		    lack =  true;
+					  		    changeIndex(index);
+							});
+							
+							
+						}else if(!deriction || "left - right" ){
+							index ++;
+							move(SliderPage,{left:SliderPage.offsetLeft - moveWidth},function(){
+								if(SliderPage.offsetLeft == - moveWidth * num){
+									SliderPage.style.left = "0px";
+									index = 0;
+								}
+								timer = setTimeout(autoMove,1500);
+								lack =  true;
+								changeIndex(index);
+							});
+					
+						}
+						}
+			
+			}
+			function changeIndex(_index){
+				
+				for(var i = 0;i <oSpanArray.length;i++){
+					oSpanArray[i].className = "";
+				
+				}
+					oSpanArray[_index].className = "active";
+			}
+			
+			
+				
+			
+			
+			
+
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			function getStyle(obj,attr){
+				if(obj.currentStyle){
+						return obj.currentStyle[attr];
+				}else{
+					return window.getComputedStyle(obj,false)[attr];
+				}
+			}
+			function move (obj, data, func) {         
+		clearInterval(obj.timer);
+    	var iSpeed,
+			iCur,
+			name;            
+		startTimer = obj.timer = setInterval(function () {
+			var bStop = true;
+			for (var attr in data) {
+				if (attr === 'opacity') {
+ 					name = attr;
+					iCur = parseFloat(getStyle(obj, attr)) * 100;
+				}else {
+					iCur = parseInt(getStyle(obj, attr));
+				}
+				iSpeed = ( data[attr] - iCur) / 8;
+				if (iSpeed > 0) {
+ 					iSpeed = Math.ceil(iSpeed);
+				}else {
+					iSpeed = Math.floor(iSpeed);
+				}
+				if (attr === 'opacity') {
+					obj.style.opacity = ( iCur + iSpeed ) / 100; 
+				}else {
+					obj.style[attr] = iCur + iSpeed + 'px';
+				}
+				if ( Math.floor(Math.abs(data[attr] - iCur)) != 0 ) {
+					bStop = false;
+				}
+			}
+			if (bStop) {					
+				clearInterval(obj.timer);
+				if (name === 'opacity') {
+					obj.style.opacity = data[name] / 100;
+				}
+				func();
+			}
+		},30);
+	}  
+			
+		
+		
+		
+		
+		</script>
+	</body>
+</html>
