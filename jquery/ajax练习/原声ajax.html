@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!-- <script type="text/javascript" src="/jquery/new_file.js"> </script>  -->
+
+    <!-- //  <script>
+    //     var her = null; 
+    //     if(window.XMLHttpRequest){              //创建一个原声发送网络请求的对象 兼容ie6  使用了 ActiveXObject
+    //             her = new XMLHttpRequest();
+    //     }else{
+    //         her = new ActiveXObject('Microsoft.XMLHttp');
+    //     }                                                                                     //创建对象后状态量为0
+    //     her.open('get','http://developer.duyiedu.com/edu/testAjaxCrossOrigin',true);   //true false代表同步和异步              //请求体  建立与服务器之间的链接  状态改变为1
+    //                                 //发送函数  状态量不改变
+    //     her.onreadystatechange = function(){                       //onreadystatechange属性记录状态量变化，代表着网络请求的进度     状态4代表请求完成已经接受到数据
+    //         if(her.readyState == 4 && her.status ==200  ){                  //当状态量为4时，请求完成   status代表网络请求数据的状态，200代表成功，300代表重定向，400代表客户端失败，500待变服务器端失败
+    //             console.log(her.responseText);             //返回的数据存储在responseText属性里
+    //         }
+    //     }
+    //     her.send();  
+    // </script>  -->
+
+
+
+    <!-- 仿写jsonp原理 -->
+    <!-- <script>
+        $ = {
+            ajax: function (options) {
+                var url = options.url;
+                console.log(typeof(url))
+                var type = options.type;
+                var datatype = options.datatype;
+                var targettolcoal = '';
+                var targethost = '';
+                //判断是否时绝对对路径
+                if (url.indexOf("http://")==0 || url.indexOf("https://") == 0) {
+                    var obj = new URL(url);
+                    targettolcoal = obj.protocol;
+                    targethost = obj.host;
+                } else {
+                    targettolcoal = location.protocol;
+                    targethost = location.host;
+                }
+                if (datatype == 'jsonp') {
+                    if (location.protocol == targettolcoal && location.host == targethost) {
+                        //暂时只讨论跨域的问题 
+                    } else {
+                        var script = document.createElement('script');
+                        var callback = 'cb' + Math.floor(Math.random() * 10000000);
+                        window[callback] = options.success; 
+                        if (url.indexOf('?') > 0) {
+                            script.src = url + '&callback=' + callback;
+                        } else {
+                            script.src = url + '?callback=' + callback;
+                        }
+                        script.id = callback;
+                        document.head.appendChild(script);
+                    }
+
+                }
+            }
+
+        }
+      $.ajax({
+          url:'http://developer.duyiedu.com/edu/testJsonp',
+          type:'get',
+          datatype:'jsonp',
+          success: function(res){
+            console.log(res);
+          }
+      })
+    </script> -->
+    <!-- <script>
+        var $ = {
+            ajax : function(option){
+                var url  = option.url;
+                var type = option.type;
+                var datatype = option.datatype;
+                var targettolcal = '';
+                var targethost = '';
+                var callback = 'cb'+ Math.floor(Math.random()* 1000000);
+                //说明跨域
+                if(url.indexOf("http://") == 0 || url.indexOf("https://") == 0){
+                    var obj = new URL(url);
+                    targettolcal = obj.targettolcal;
+                    targethost = obj.host;
+                }else{
+                    targettolcal = location.protocol;
+                    targethost = location.host;
+                } 
+                window[callback] = option.success;
+                if(option.datatype =='jsonp'){
+                    var script = document.createElement('script');
+                    if(targettolcal == location.protocol && targethost == location.host){
+                        //相同不考虑
+                    }else{
+                        if(url.indexOf("?") > 0 ){
+                            script.src = url + '&callback=' + callback;                          //url后添加&callback = callback
+                        }else{
+                             script.src = url + '?callback=' +callback;                       //url后添加?callback = callback
+                        }
+                        script.id = callback;
+                        document.head.appendChild(script)     ;                 
+                    }
+
+
+                }
+            }
+        }
+
+
+
+
+
+        $.ajax({
+          url:'http://developer.duyiedu.com/edu/testJsonp',
+          type:'get',
+          datatype:'jsonp',
+          success: function(res){
+            console.log(res);
+          }
+      })
+    </script> -->
+</body>
+
+</html>

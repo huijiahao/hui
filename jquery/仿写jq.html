@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		
+	</style>
+</head>
+
+<body>
+	
+
+	<script type="text/javascript" src="new_file.js"></script>
+
+	<script>
+		(function () {
+			function jQuery(selector) {
+				return new jQuery.prototype.init(selector);
+			}
+			
+
+			jQuery.prototype.init = function (selector) {
+				//this
+				// underfine null dom
+				this.length = 0;
+				if (selector == null) {
+					return this;
+				}
+				if (typeof (selector) == "string" && selector.indexOf(".") != -1) {
+					var dom = document.getElementsByClassName(selector.slice(1));
+				} else if (typeof (selector) == "string" && selector.indexOf("#") != -1) {
+					var dom = document.getElementById(selector.slice(1));
+				}
+				//判断selector是否是dom对象
+				//			 	if(selector instanceof Element){
+				//			 		this[0]=selector;
+				//			 		this.length ++;
+				//			 		
+				//			 	}
+				if (selector instanceof Element || dom.length == "undefined") {
+					this[0] = dom || selector;
+					this.length++;
+				} else {
+					for (var i = 0; i < dom.length; i++) {
+						this[i] = dom[i];
+						this.length++;
+					}
+				}
+			}
+			jQuery.prototype.css = function (arr) {
+				for (var i = 0; i < this.length; i++) {
+					for (var css in arr) {
+						this[i].style[css] = arr[css];
+					}
+				}
+				return this;
+			}
+			jQuery.prototype.get = function (num) {
+				return num != null ? (num >= 0 ? this[num] : this[num + length]) : [].slice.call(this, 0);
+			}
+			jQuery.prototype.pushStack = function (dom) {
+				if (dom.constructor != jQuery) {
+					dom = jQuery(dom);
+				}
+				dom.prevObject = this;
+				return dom;
+			}
+			jQuery.prototype.eq = function (num) {
+
+				var dom = num != null ? (num >= 0 ? this[num] : this[num + length]) : [].slice.call(this, 0);
+				//返回JQ对象没有preObj
+				//			    return jQuery(dom);
+				return this.pushStack(dom);
+			}
+			jQuery.prototype.add = function (selector) {
+				var curObj = jQuery(selector);
+				var preObj = this;
+				var newObj = jQuery();
+
+				for (var i = 0; i < curObj.length; i++) {
+					newObj[newObj.length++] = curObj[i];
+				}
+
+
+				for (var j = 0; j < preObj.length; j++) {
+					newObj[newObj.length++] = preObj[j];
+				}
+
+
+				this.pushStack(newObj);
+				return newObj;
+
+
+			}
+			jQuery.prototype.end = function () {
+				return this.prevObject;
+			}
+
+			// jQuery.prototype.myOn = function(type,handle){
+			//     for(var i=0;i<this.length;i++){
+			//         if(!this[i].cacheEvent){
+			//             this[i].cacheEvent = {};
+			//         }
+			//         if(!this[i].cacheEvent[type]){
+			//             this[i].cacheEvent[type] = [handle];
+			//         }else{
+			//             this[i].cacheEvent[type].push(handle);
+			//         }
+			//     }
+			// }
+			jQuery.prototype.myOn = function (type, handle) {
+				for (var i = 0; i < this.length; i++) {
+					if (!this[i].cacheEvent) {
+						this[i].cacheEvent = {};
+					}
+					if (!this[i].cacheEvent[type]) {
+						this[i].cacheEvent[type] = [handle];
+					} else {
+						this[i].cacheEvent[type].pushStack(handle);
+					}
+				}
+			}
+			jQuery.prototype.myTrigger = function (type) {
+				var parmer = arguments.length > 1 ? [].slice.call(arguments, 1) : [];
+				var self = this;
+				for (var i = 0; i < this.length; i++) {
+					if (this[i].cacheEvent[type]) {
+						this[i].cacheEvent[type].forEach(function (ele, index) {
+							ele.apply(self, parmer);
+						})
+					}
+				}
+			}
+			jQuery.prototype.myqueue = function () { //传两个值，一个字符串 一个函数
+				var myQueue = this;
+				var queueName = arguments[0] || 'fx';
+				var queueFunc = arguments[1] || null;
+				var len = arguments.length;
+				if (len == 1) {
+					return myQueue[0][queueName];
+				}
+				myQueue[0][queueName] == undefined ? myQueue[0][queueName] = [queueFunc] : myQueue[0][queueName].push(
+					queueFunc)
+				return this;
+			}
+			// jQuery.prototype.myqueue  = function(){    //zufuchuan   function
+			// 	    var self =this;
+			// 		var name = arguments[0] || 'fx';
+			// 		var arry = arguments[1] || null;
+			// 		var len = arguments.length;
+			// 		if(len ==1 ){
+			// 			return self[0][name];
+			// 		}
+			// 		self[0][name] ==undefined ? self[0][name] = [arry] : self[0][name].push(arry);
+			// 		return this;
+
+			// }
+			jQuery.prototype.mydequeue = function () {
+				var str = arguments[0] || 'fx';
+				var arry = this.myqueue(str);
+				var nowArry = arry.shift();
+				var self = this;
+				if (nowArry == undefined) {
+					return;
+				}
+				var next = function () {
+					self.mydequeue(str);
+				}
+				nowArry(next);
+				return this;
+
+			}
+			// jQuery.prototype.mydequeue = function(){
+			// 	var self = this;
+			// 	var str = arguments[0] || 'fx';
+			// 	var arry = this.myqueue(str);
+			// 	var nowfunc = arry.shift();
+			// 	if(nowfunc == undefined){
+			// 		return ;
+			// 	}
+			// 	var next = function(){
+			// 		self.mydequeue();
+			// 	}
+			// 	nowfunc(next);
+
+
+
+			// 	return this;
+			// }
+
+			jQuery.prototype.myanimate = function (json, callback) {
+				var len = this.length;
+				var self = this;
+
+				//放入队列的执行函数
+				var basefunc = function (next) {
+					var timerr = 0;
+					for (var i = 0; i < len; i++) {
+						stareMove(this[i], json, function () {
+							timerr++;
+							if (timerr == len) {
+								callback && callback();
+								next();
+							}
+						})
+					}
+
+
+				}
+
+				this.myqueue('fx', basefunc);
+				if (this.myqueue('fx').length == 1) {
+					this.mydequeue('fx');
+				}
+
+
+
+				function getStyle(dom,attr){
+				if(window.getComputedStyle){
+					return window.getComputedStyle(dom,null)[attr];
+				}else{
+					return dom.currentStyle[attr];
+				}
+			}
+				function stareMove(dom, attrObject, callbace) {
+					clearInterval(timer);
+					var speed = null;
+					var icur = null;
+					dom.timer = setInterval(function () {
+						var term = true;
+						for (var attr in attrObject) {
+							if (attr == "opacity") {
+								icur = parseFloat(getStyle(dom, attr)) * 100;
+							} else {
+								icur = parseInt(getStyle(dom, attr));
+							}
+							speed = (attrObject[attr] - icur) / 7;
+							speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
+							if (attr == "opacity") {
+								dom.style.opacity = (icur + speed) / 100;
+
+							} else {
+								dom.style[attr] = icur + speed + "px";
+							}
+							if (icur != attrObject[attr]) {
+								term = false;
+							}
+
+						}
+						if (term) {
+							clearInterval(dom.timer);
+							typeof callbace == "function" && callbace();
+						}
+
+
+					}, 30)
+
+				}
+
+
+
+
+
+
+
+				return this;
+
+			}
+
+
+
+
+			// jQuery.mycallback = function(){
+			// 	//once monrey once money
+			// 	var option = arguments[0] || 'null';
+			// 	//数组接受add的添加的函数
+			// 	var list = [];
+			// 	//游标 按顺序执行
+			// 	var index = 0;
+			// 	//将执行过的做个记录
+			// 	var filed = false;
+			// 	var args = [];
+			// 	//返回调用的执行函数
+			// 	var fire = function (){
+			// 		for(;index < list.length;index++){
+			// 			list[index].apply(window,args);
+			// 		}
+			// 		if(option.indexOf('once') != -1){
+			// 			list = [];
+			// 			index = 0;
+			// 		}
+			// 	}
+
+
+
+			// 	return {
+			// 		add:function(fres) {
+			// 			list.push(fres);
+			// 			if(option.indexOf('memory') != -1 && filed ){
+			// 				fire();
+			// 			}
+			// 			return this;
+			// 		},
+			// 		fire:function() {
+			// 			index = 0;
+			// 			args = arguments;
+			// 			filed = true;
+			// 			fire();
+			// 		}
+			// 	}
+				
+			// }
+			jQuery.mycallback = function(){
+				var optinon = arguments[0] ||'null';
+				var list = [];
+				var index = 0;
+				var arge = [];
+				var faile = false;
+				var fire = function(){
+					for(;index<list.length;index++){
+						list[index].apply(window,arge);
+						
+					}if(optinon.indexOf('once') != -1){
+							list = [];
+							index = 0;
+						}
+				}
+
+
+
+
+				return {
+					add : function(ress){
+						list.push(ress);
+						if(optinon.indexOf('memory') != -1 &&  faile){
+							fire();
+						}
+						return this;
+					},
+					fire : function(res){
+						index = 0;
+						arge = res;
+						faile = true;
+						fire();
+					} 
+				}
+			}
+			
+			jQuery.deffer = function(){
+				var arry = [
+					[
+						jQuery.mycallback(),'done','resolve'
+					],[
+						jQuery.mycallback(),'faile','reject'
+					],[
+						jQuery.mycallback(),'progress','notify'
+					],
+				]
+				var deffer = {};
+				for(var i=0;i<3;i++){
+					(function(indexx){
+						 arry[i]['done'] = arry[i][0].add(
+							 function(){
+								 
+							 }
+						 )
+
+
+
+
+
+
+
+					})(i)
+					
+
+				}
+
+
+			}
+
+
+
+
+
+			jQuery.prototype.init.prototype = jQuery.prototype;
+
+
+
+			window.$ = window.jquery = jQuery;
+		})()
+
+
+ 
+	</script>
+<script>
+	
+	
+</script>
+</body>
+
+</html>
