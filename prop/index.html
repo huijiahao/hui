@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./index.css">
+    <script src="/vue.js"></script>
+    <script src="./axios.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <video-list :videolist="videolist"></video-list>
+    </div>
+   
+
+
+
+
+
+
+
+
+    <script>
+        Vue.component('video-list', {
+            props: ["videolist"],
+            template: `
+            <div class="video-list">
+              <video-item
+                v-for="video in videolist"
+                v-bind="video"
+              ></video-item>
+            </div>
+            `
+        })
+        Vue.component('video-item', {
+            props: ["poster", "play", "rank", "title"],
+            template: `
+            <div class="video-item">
+        <div class="poster">
+            <img :src="poster" alt="">
+            <div class="info">
+                <div class="play">{{ play }}</div>
+                <div class="rank">{{ rank}}</div>
+            </div>
+        </div>
+        <div class="title">{{ title }}</div>
+    </div>
+            `
+
+
+
+            
+        })
+        var em = new Vue({
+            el: "#app",
+            data: {
+                videolist: []
+            },
+            created() {
+                axios.get('https://developer.duyiedu.com/vue/bz/video', {
+                    params: {
+                        start: 0,
+                        offset: 12
+                    }
+                }).then(res => {
+                    console.log(res.data.data)
+                    this.videolist = res.data.data;
+                })
+            }
+        })
+    </script>
+</body>
+
+</html>
